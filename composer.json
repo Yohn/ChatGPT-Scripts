@@ -1,0 +1,32 @@
+{
+	"name": "yohn/yohns-template",
+	"description": "A good starting point for future projects",
+	"minimum-stability":"dev",
+	"license": "MIT",
+	"type": "project",
+	"require": {
+		"php": ">=8",
+		"myjw3b/core": "*",
+		"myjw3b/icons": "*",
+		"myjw3b/helpful": "*",
+		"myjw3b/php-bootstrap-form-class": "*",
+		"myjw3b/php-pdo-chainer": "*",
+		"myjw3b/language": "*",
+		"myjw3b/links": "*",
+		"myjw3b/file-writing": "*"
+	},
+	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^3.59"
+	},
+	"authors": [{
+		"name": "John Brittain III",
+		"email": "Yohn@coming-soon.com",
+		"homepage": "https://github.com/Yohn",
+		"role": "Developer"
+	}],
+	"autoload": {
+		"psr-4": {
+			"Yohn\\Build\\": "Build"
+		}
+	}
+}
