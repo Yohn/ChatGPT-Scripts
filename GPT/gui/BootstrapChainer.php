@@ -1,5 +1,30 @@
 <?php
-class BootstrapBuilder {
+namespace Yohns\GPT\gui;
+/*
+$builder = new BootstrapChainer();
+
+echo $builder
+    ->navbar([
+        ['text' => 'Home', 'link' => '/home', 'active' => true],
+        ['text' => 'Features', 'link' => '/features'],
+        ['text' => 'Pricing', 'link' => '/pricing']
+    ], 'MyBrand')
+    ->carousel('mainCarousel', [
+        ['image' => 'img1.jpg', 'alt' => 'First slide', 'title' => 'First Slide', 'caption' => 'This is the first slide'],
+        ['image' => 'img2.jpg', 'alt' => 'Second slide', 'title' => 'Second Slide', 'caption' => 'This is the second slide']
+    ])
+    ->badge('New', 'badge-danger', ['id' => 'myBadge'], 'ms-2')
+    ->buttonGroup([
+        ['text' => 'Left', 'type' => 'btn-primary'],
+        ['text' => 'Middle', 'type' => 'btn-primary'],
+        ['text' => 'Right', 'type' => 'btn-primary']
+    ])
+    ->modal('myModal', 'Modal Title', 'This is the modal body.')
+    ->render();
+
+*/
+
+class BootstrapChainer {
 	private $components = [];
 
 	/**
