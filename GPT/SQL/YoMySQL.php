@@ -73,7 +73,7 @@ class YoMySQL
 	/**
 	 * @var array List of found deprecated mysql_* functions with details.
 	 */
-	private array $foundDeprecatedFunctions = [];
+	private array $depFuncs = [];
 
 	/**
 	 * Find all .php files in a directory.
@@ -136,7 +136,7 @@ class YoMySQL
 					// Append lines to `afterParameters` until we reach the end of the statement
 					if (strpos($line, ';') !== false) {
 						$currentFunctionData['endLine'] = $lineNumber + 1;
-						$this->foundDeprecatedFunctions[] = $currentFunctionData;
+						$this->depFuncs[] = $currentFunctionData;
 						$inFunction = false;
 					} else {
 						$currentFunctionData['afterParameters'] .= trim($line);
@@ -250,16 +250,17 @@ class YoMySQL
 	 *
 	 * @return array The array containing details of found deprecated functions.
 	 */
-	public function getFoundDeprecatedFunctions(): array
+	public function getdepFuncs(): array
 	{
-		return $this->foundDeprecatedFunctions;
+		return $this->depFuncs;
 	}
 }
 
+//$phpCode = file_get_contents(__DIR__.'/../../oldCode/classes/Report.class.php');
 // Example usage:
 $yoMySQL = new YoMySQL();
-$yoMySQL->processDirectory('/path/to/your/php/files');
+$yoMySQL->processDirectory(__DIR__.'/../../oldCode/classes');
 
 // Retrieve the array of deprecated function details
-$foundFunctions = $yoMySQL->getFoundDeprecatedFunctions();
+$foundFunctions = $yoMySQL->getdepFuncs();
 print_r($foundFunctions);

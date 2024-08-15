@@ -26,10 +26,11 @@ echo $builder
 
 class BootstrapChainer {
 	private $components = [];
+	private $type = 'link';
 
 	/**
 	 * Converts an array of attributes into a string for HTML.
-	 * 
+	 *
 	 * @param array $attributes Key-value pairs of attributes.
 	 * @return string The attributes as an HTML string.
 	 */
@@ -43,7 +44,7 @@ class BootstrapChainer {
 
 	/**
 	 * Merges default classes with additional custom classes.
-	 * 
+	 *
 	 * @param string $defaultClasses Default Bootstrap classes.
 	 * @param string $additionalClasses User-provided custom classes.
 	 * @return string Merged classes string.
@@ -54,7 +55,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds an accordion component.
-	 * 
+	 *
 	 * @param string $id The ID of the accordion.
 	 * @param array $items The items of the accordion, each containing a header and body.
 	 * @param array $attributes Additional attributes for the accordion element.
@@ -84,7 +85,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a badge component.
-	 * 
+	 *
 	 * @param string $content The text inside the badge.
 	 * @param string $type The type of badge (e.g., 'badge-primary').
 	 * @param array $attributes Additional attributes for the badge element.
@@ -100,7 +101,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a breadcrumb component.
-	 * 
+	 *
 	 * @param array $items The breadcrumb items, each containing 'text' and optional 'link'.
 	 * @param array $attributes Additional attributes for the breadcrumb element.
 	 * @param string $additionalClasses Custom classes for the breadcrumb.
@@ -123,7 +124,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a button group component.
-	 * 
+	 *
 	 * @param array $buttons The buttons, each containing 'text' and 'type' (e.g., 'btn-primary').
 	 * @param array $attributes Additional attributes for the button group element.
 	 * @param string $additionalClasses Custom classes for the button group.
@@ -142,7 +143,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a carousel component.
-	 * 
+	 *
 	 * @param string $id The ID of the carousel.
 	 * @param array $items The carousel items, each containing 'image', 'alt', 'title', and 'caption'.
 	 * @param array $attributes Additional attributes for the carousel element.
@@ -184,7 +185,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a collapse component.
-	 * 
+	 *
 	 * @param string $id The ID of the collapse element.
 	 * @param string $content The content inside the collapse element.
 	 * @param array $attributes Additional attributes for the collapse element.
@@ -200,7 +201,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a dropdown component.
-	 * 
+	 *
 	 * @param string $buttonText The text of the dropdown button.
 	 * @param array $menuItems The menu items, each containing 'text' and 'link'.
 	 * @param array $attributes Additional attributes for the dropdown button element.
@@ -222,9 +223,12 @@ class BootstrapChainer {
 		return $this;
 	}
 
+	public function listType($type){
+		$this->type = $type;
+	}
 	/**
 	 * Adds a list group component.
-	 * 
+	 *
 	 * @param array $items The list group items, each containing 'text' and optionally 'active' or 'disabled' states.
 	 * @param array $attributes Additional attributes for the list group element.
 	 * @param string $additionalClasses Custom classes for the list group.
@@ -234,6 +238,20 @@ class BootstrapChainer {
 		$classes = $this->mergeClasses('list-group', $additionalClasses);
 		$attrString = $this->attributesToString(array_merge($attributes, ['class' => $classes]));
 		$content = '';
+		switch($this->type){
+			case 'link':
+				$tag = 'a';
+				$opening = 'div';
+				break;
+			case 'button':
+				$tag = 'button';
+				$opening = 'div';
+				break;
+			case 'text':
+				$tag = 'li';
+				$opening = 'ul';
+				break;
+		}
 		foreach ($items as $item) {
 			$itemClasses = 'list-group-item';
 			if (isset($item['active']) && $item['active']) {
@@ -242,15 +260,15 @@ class BootstrapChainer {
 			if (isset($item['disabled']) && $item['disabled']) {
 				$itemClasses .= ' disabled';
 			}
-			$content .= "<li class='$itemClasses'>{$item['text']}</li>";
+			$content .= "<{$tag} class=\"{$itemClasses}\">{$item['text']}</{$tag}>";
 		}
-		$this->components[] = "<ul $attrString>$content</ul>";
+		$this->components[] = "<{$opening} $attrString>$content</$opening>";
 		return $this;
 	}
 
 	/**
 	 * Adds a modal component.
-	 * 
+	 *
 	 * @param string $id The ID of the modal.
 	 * @param string $title The title of the modal.
 	 * @param string $body The body content of the modal.
@@ -276,7 +294,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a navbar component.
-	 * 
+	 *
 	 * @param array $items The navbar items, each containing 'text' and 'link', and optionally 'active'.
 	 * @param string $brand The brand text of the navbar.
 	 * @param array $attributes Additional attributes for the navbar element.
@@ -311,7 +329,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a navs or tabs component.
-	 * 
+	 *
 	 * @param array $items The nav items, each containing 'text' and 'link', and optionally 'active'.
 	 * @param bool $tabs If true, uses the 'nav-tabs' class; otherwise, uses the 'nav' class.
 	 * @param array $attributes Additional attributes for the nav element.
@@ -333,7 +351,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds an offcanvas component.
-	 * 
+	 *
 	 * @param string $id The ID of the offcanvas element.
 	 * @param string $title The title of the offcanvas element.
 	 * @param string $body The body content of the offcanvas element.
@@ -357,7 +375,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a pagination component.
-	 * 
+	 *
 	 * @param array $pages The pagination items, each containing 'text', 'link', and optionally 'active' or 'disabled'.
 	 * @param array $attributes Additional attributes for the pagination element.
 	 * @param string $additionalClasses Custom classes for the pagination.
@@ -383,7 +401,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a progress bar component.
-	 * 
+	 *
 	 * @param int $value The current value of the progress bar.
 	 * @param int $max The maximum value of the progress bar.
 	 * @param array $attributes Additional attributes for the progress bar element.
@@ -399,7 +417,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a spinner component.
-	 * 
+	 *
 	 * @param string $type The type of spinner ('border' or 'grow').
 	 * @param string $color The color of the spinner (e.g., 'text-primary').
 	 * @param array $attributes Additional attributes for the spinner element.
@@ -415,7 +433,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a toast component.
-	 * 
+	 *
 	 * @param string $body The body content of the toast.
 	 * @param string $title The title of the toast.
 	 * @param array $attributes Additional attributes for the toast element.
@@ -432,7 +450,7 @@ class BootstrapChainer {
 
 	/**
 	 * Adds a tooltip component.
-	 * 
+	 *
 	 * @param string $text The text of the tooltip.
 	 * @param string $placement The placement of the tooltip ('top', 'bottom', 'left', 'right').
 	 * @param string $target The ID of the element that triggers the tooltip.
@@ -449,7 +467,7 @@ class BootstrapChainer {
 
 	/**
 	 * Renders all components that have been added.
-	 * 
+	 *
 	 * @return string The final HTML output.
 	 */
 	public function render() {
@@ -458,7 +476,7 @@ class BootstrapChainer {
 
 	/**
 	 * Clears the component list, resetting the builder.
-	 * 
+	 *
 	 * @return $this
 	 */
 	public function clear() {
