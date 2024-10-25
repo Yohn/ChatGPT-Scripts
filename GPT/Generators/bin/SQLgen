@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__.'/../SQLGen/Validator.php';
+require_once __DIR__.'/../SQLGen/SQLConnectorGenerator.php';
+require_once __DIR__.'/../SQLGen/DatabaseClassGenerator.php';
+
+if (count($argv) < 3) {
+	echo "Usage: php SQLGen <database_name> <username> <password>\n";
+	exit(1);
+}
+
+$dbName = $argv[1];
+$username = $argv[2];
+$password = $argv[3] ?? '';
+
+$generator = new DatabaseClassGenerator($dbName, $username, $password);
+$generator->generateClasses();
+
+$sqlConnectorGenerator = new SQLConnectorGenerator($dbName, $username, $password);
+$sqlConnectorGenerator->generate();
+
+echo "SQL Connector generation complete.\n";
