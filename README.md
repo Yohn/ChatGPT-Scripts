@@ -1,11 +1,13 @@
 # ChatGPT-Scripts
 
 ## Benchmarks
-### Find and Replace
-#### `sprintf` vs `strtr` vs `str_replace` vs `preg_replace` vs `bbcode` vs `printf`
-> [!TIP]
+## Find and Replace (`sprintf` vs `strtr` vs `str_replace` vs `preg_replace` vs `bbcode` vs `printf`)
+
+> [!Note]
 > I'm kind of leaning to 	`strtr()` what do you guys think?
-##### PHP 8.3.12
+
+### PHP 8.3.12
+
 | func() | time() |
 | --- | --- |
 | sprintf: | 0.236711 seconds |
@@ -15,7 +17,7 @@
 
 (didnt run printf in 8.3.12 cause it was too slow)<br>
 
-##### PHP 8.3.8<br>
+### PHP 8.3.8<br>
 
 | func() | time() |
 | --- | --- |
