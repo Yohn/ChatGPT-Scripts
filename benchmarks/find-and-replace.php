@@ -11,11 +11,13 @@ class Benchmark
 	public function run(int $iterations = 100000): void
 	{
 		$sprintfTime = $this->benchmarkSprintf($iterations);
+		$benchmarkPrintf = $this->benchmarkPrintf($iterations);
 		$bbcodeTime = $this->benchmarkBBCode($iterations);
 		$strtrTime = $this->benchmarkStrtr($iterations);
 		$pregReplaceTime = $this->benchmarkPregReplace($iterations);
 
 		printf("sprintf: %f seconds\n", $sprintfTime);
+		printf("printf: %f seconds\n", $benchmarkPrintf);
 		printf("bbcode: %f seconds\n", $bbcodeTime);
 		printf("strtr: %f seconds\n", $strtrTime);
 		printf("preg_replace: %f seconds\n", $pregReplaceTime);
@@ -33,6 +35,30 @@ class Benchmark
 
 		for ($i = 0; $i < $iterations; $i++) {
 			sprintf(
+				'Hello %s, you have %d new messages, your balance is %f, and your last login was on %s at %s',
+				'Yohn',
+				5,
+				1234.56,
+				'2024-10-27',
+				'12:00 PM'
+			);
+		}
+
+		return microtime(true) - $start;
+	}
+
+	/**
+	 * Benchmark printf function with a complex string
+	 *
+	 * @param int $iterations
+	 * @return float
+	 */
+	private function benchmarkPrintf(int $iterations): float
+	{
+		$start = microtime(true);
+
+		for ($i = 0; $i < $iterations; $i++) {
+			printf(
 				'Hello %s, you have %d new messages, your balance is %f, and your last login was on %s at %s',
 				'Yohn',
 				5,
@@ -136,12 +162,16 @@ $benchmark->run();
 
 /**
  * PHP 8.3.12
- * 
  * sprintf: 0.236711 seconds
- * bbcode: 0.458876 seconds
  * strtr: 0.305862 seconds
  * preg_replace: 0.400507 seconds
+ * bbcode: 0.458876 seconds
+ * (didnt run printf in 8.3.12)
+ * 
+ * PHP 8.3.8
+ * strtr: 				0.080120 seconds
+ * sprintf: 			0.117685 seconds
+ * preg_replace: 	0.133060 seconds
+ * bbcode: 				0.200995 seconds
+ * printf: 				0.649218 seconds
  */
-
-
-
