@@ -10,7 +10,7 @@
       position: relative;
     }
     .header-cell:hover {
-      background: var(--secondary-hover);
+      background: var(--pico-secondary-hover);
     }
     .sort-indicator::after {
       content: '↕️';
@@ -24,9 +24,9 @@
     }
     .column-toggle-menu {
       position: absolute;
-      background: var(--background-color);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
+      background: var(--pico-background-color);
+      border: 1px solid var(--pico-border-color);
+      border-radius: var(--pico-border-radius);
       padding: 1rem;
       z-index: 1000;
       min-width: 200px;
@@ -92,10 +92,46 @@
 
   <script>
     // Sample data for preview - replace with your actual data
-    const sampleData = [
-      { id: 1, name: "John Doe", date: "2024-01-01", status: "Active" },
-      { id: 2, name: "Jane Smith", date: "2024-01-02", status: "Inactive" },
-      { id: 3, name: "Bob Johnson", date: "2024-01-03", status: "Active" },
+    const sampleData = [	{ id: 1, name: "John Doe", date: "2024-01-01", status: "Active" },
+	{ id: 2, name: "Jane Smith", date: "2024-01-02", status: "Inactive" },
+	{ id: 3, name: "Bob Johnson", date: "2024-01-03", status: "Active" },
+	{ id: 4, name: "Alice Brown", date: "2024-01-04", status: "Inactive" },
+	{ id: 5, name: "Charlie Davis", date: "2024-01-05", status: "Active" },
+	{ id: 6, name: "Diana Evans", date: "2024-01-06", status: "Inactive" },
+	{ id: 7, name: "Frank Green", date: "2024-01-07", status: "Active" },
+	{ id: 8, name: "Grace Hall", date: "2024-01-08", status: "Inactive" },
+	{ id: 9, name: "Henry Lewis", date: "2024-01-09", status: "Active" },
+	{ id: 10, name: "Irene Martinez", date: "2024-01-10", status: "Inactive" },
+	{ id: 11, name: "Jack Nelson", date: "2024-01-11", status: "Active" },
+	{ id: 12, name: "Karen Olson", date: "2024-01-12", status: "Inactive" },
+	{ id: 13, name: "Larry Parker", date: "2024-01-13", status: "Active" },
+	{ id: 14, name: "Megan Quinn", date: "2024-01-14", status: "Inactive" },
+	{ id: 15, name: "Nick Roberts", date: "2024-01-15", status: "Active" },
+	{ id: 16, name: "Olivia Scott", date: "2024-01-16", status: "Inactive" },
+	{ id: 17, name: "Peter Taylor", date: "2024-01-17", status: "Active" },
+	{ id: 18, name: "Quinn Underwood", date: "2024-01-18", status: "Inactive" },
+	{ id: 19, name: "Rachel Vaughn", date: "2024-01-19", status: "Active" },
+	{ id: 20, name: "Steve Walker", date: "2024-01-20", status: "Inactive" },
+	{ id: 21, name: "Tina Young", date: "2024-01-21", status: "Active" },
+	{ id: 22, name: "Victor Zane", date: "2024-01-22", status: "Inactive" },
+	{ id: 23, name: "Wendy Adams", date: "2024-01-23", status: "Active" },
+	{ id: 24, name: "Xander Brooks", date: "2024-01-24", status: "Inactive" },
+	{ id: 25, name: "Yvonne Carter", date: "2024-01-25", status: "Active" },
+	{ id: 26, name: "Zack Daniels", date: "2024-01-26", status: "Inactive" },
+	{ id: 27, name: "Aaron Edwards", date: "2024-01-27", status: "Active" },
+	{ id: 28, name: "Bella Fisher", date: "2024-01-28", status: "Inactive" },
+	{ id: 29, name: "Caleb Garcia", date: "2024-01-29", status: "Active" },
+	{ id: 30, name: "Daisy Howard", date: "2024-01-30", status: "Inactive" },
+	{ id: 31, name: "Ethan Iverson", date: "2024-01-31", status: "Active" },
+	{ id: 32, name: "Fiona Jackson", date: "2024-02-01", status: "Inactive" },
+	{ id: 33, name: "George Kelly", date: "2024-02-02", status: "Active" },
+	{ id: 34, name: "Hannah Lopez", date: "2024-02-03", status: "Inactive" },
+	{ id: 35, name: "Ian Moore", date: "2024-02-04", status: "Active" },
+	{ id: 36, name: "Julia Newton", date: "2024-02-05", status: "Inactive" },
+	{ id: 37, name: "Kyle Owens", date: "2024-02-06", status: "Active" },
+	{ id: 38, name: "Liam Peterson", date: "2024-02-07", status: "Inactive" },
+	{ id: 39, name: "Mia Quinn", date: "2024-02-08", status: "Active" },
+	{ id: 40, name: "Noah Rivers", date: "2024-02-09", status: "Inactive" },
     ];
 
     class DataTableViewer {
