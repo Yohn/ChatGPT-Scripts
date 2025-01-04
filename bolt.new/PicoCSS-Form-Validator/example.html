@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Example</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yohns/picocss@2.2.2/css/pico.min.css" />
+</head>
+<body>
+  <main class="container">
+    <form id="registrationForm" autocomplete="off">
+        <section role="form">
+            <input type="text" 
+                   id="username" 
+                   name="username" 
+                   placeholder="Username:"
+                   autocomplete="off"
+                   required 
+                   minlength="3" 
+                   maxlength="20"
+                   pattern="^[a-zA-Z0-9_]+$"
+                   data-invalid="Username must be 3-20 characters and contain only letters, numbers, and underscores"
+                   data-valid="Username is available">
+            <label for="username">Username:</label>
+        </section>
+
+        <section role="form">
+            <input type="email" 
+                   id="email" 
+                   name="email" 
+                   placeholder="Email:"
+                   autocomplete="off"
+                   required
+                   data-invalid="Please enter a valid email address"
+                   data-valid="Email format is valid">
+            <label for="email">Email:</label>
+        </section>
+
+        <section role="form">
+            <input type="password" 
+                   id="password" 
+                   name="password" 
+                   placeholder="Password:"
+                   autocomplete="off"
+                   required 
+                   minlength="8"
+                   pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+                   data-invalid="Password must be at least 8 characters and contain both letters and numbers"
+                   data-valid="Password meets requirements">
+            <label for="password">Password:</label>
+        </section>
+
+        <section role="form">
+            <input type="password" 
+                   id="confirmPassword" 
+                   name="confirmPassword" 
+                   placeholder="Confirm Password:"
+                   autocomplete="off"
+                   required
+                   data-invalid="Passwords do not match"
+                   data-valid="Passwords match">
+            <label for="confirmPassword">Confirm Password:</label>
+        </section>
+
+        <section role="form">
+            <input type="number" 
+                   id="age" 
+                   name="age" 
+                   placeholder="Age:"
+                   autocomplete="off"
+                   min="18" 
+                   max="120"
+                   data-invalid="Age must be between 18 and 120"
+                   data-valid="Age is valid">
+            <label for="age">Age:</label>
+        </section>
+
+        <button type="submit">Register</button>
+    </form>
+  </main>
+
+    <script type="module" src="src/js/example.js"></script>
+</body>
+</html>
