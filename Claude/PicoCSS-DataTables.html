@@ -9,9 +9,6 @@
       user-select: none;
       position: relative;
     }
-    .header-cell:hover {
-      background: var(--pico-secondary-hover);
-    }
     .sort-indicator::after {
       content: '↕️';
       margin-left: 5px;
@@ -316,7 +313,7 @@
         const pageData = this.filteredData.slice(startIndex, endIndex);
 
         this.config.container.innerHTML = `
-          <table>
+          <table class="striped">
             <thead>
               <tr>
                 <th>Edit</th>
