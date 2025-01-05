@@ -67,22 +67,30 @@
     <h1>DataTables Viewer</h1>
     
     <div id="tableControls" class="table-controls">
-      <div style="flex-grow: 1;">
-        <input type="search" id="globalSearch" placeholder="Search all columns...">
-      </div>
-      <div>
-        <select id="rowsPerPage">
-          <option value="5">5 rows</option>
-          <option value="10">10 rows</option>
-          <option value="25">25 rows</option>
-          <option value="50">50 rows</option>
-        </select>
-      </div>
-      <div>
-        <button id="toggleColumnsBtn">Toggle Columns</button>
-      </div>
-    </div>
-
+		<nav>
+			<ul>
+				<li>
+		      <div style="flex-grow: 1;">
+    		    <input type="search" id="globalSearch" placeholder="Search all columns...">
+		      </div>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<select id="rowsPerPage">
+        	  <option value="5">5 rows</option>
+      	    <option value="10">10 rows</option>
+    	      <option value="25">25 rows</option>
+  	        <option value="50">50 rows</option>
+	        </select>
+				</li>
+				<li>
+	        <button id="toggleColumnsBtn">Toggle Columns</button>
+				</li>
+			</ul>
+		</nav>
+		</div>
+		
     <div id="columnToggleMenu" class="column-toggle-menu hidden"></div>
     <div id="tableContainer"></div>
   </main>
@@ -358,12 +366,17 @@
               </tr>
             </tfoot>
           </table>
-          <div class="pagination">
-            <button ${this.currentPage === 1 ? 'disabled' : ''} onclick="dataTable.currentPage--; dataTable.render()">Previous</button>
-            <span>Page ${this.currentPage} of ${Math.ceil(this.filteredData.length / this.config.rowsPerPage)}</span>
-            <button ${this.currentPage === Math.ceil(this.filteredData.length / this.config.rowsPerPage) ? 'disabled' : ''} 
+					<nav>
+						<ul></ul>
+						<ul><li>
+		          <div class="pagination">
+    		        <button ${this.currentPage === 1 ? 'disabled' : ''} onclick="dataTable.currentPage--; dataTable.render()">Previous</button>
+      		      <span>Page ${this.currentPage} of ${Math.ceil(this.filteredData.length / this.config.rowsPerPage)}</span>
+          		  <button ${this.currentPage === Math.ceil(this.filteredData.length / this.config.rowsPerPage) ? 'disabled' : ''} 
                     onclick="dataTable.currentPage++; dataTable.render()">Next</button>
-          </div>
+		          </div>
+						</li></ul>
+						<ul></ul>
         `;
 
         // Setup column search
