@@ -272,8 +272,8 @@
             valB = new Date(valB);
           }
 
-          if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
-          if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+          if (valA < valB) return this.sortDirection === 'desc' ? 1 : -1;  // Changed this line
+          if (valA > valB) return this.sortDirection === 'desc' ? -1 : 1;  // Changed this line
           return 0;
         });
 
