@@ -240,8 +240,7 @@
           }
         });
       }
-
-      filterData() {
+filterData() {
         this.filteredData = this.data.filter(row => {
           // Global search
           if (this.globalSearchValue) {
@@ -253,7 +252,13 @@
           return Object.entries(this.columnSearchValues).every(([field, searchValue]) => {
             if (!searchValue) return true;
             const value = String(row[field]).toLowerCase();
-            return value.includes(searchValue);
+            // For select type columns, do exact match
+            const col = this.config.columns.find(c => c.field === field);
+            if (col?.searchType === 'select') {
+              return value === searchValue.toLowerCase();
+            }
+            // For text type columns, do contains match
+            return value.includes(searchValue.toLowerCase());
           });
         });
       }
@@ -321,7 +326,7 @@
         const pageData = this.filteredData.slice(startIndex, endIndex);
 
         this.config.container.innerHTML = `
-          <table class="striped">
+          <table>
             <thead>
               <tr>
                 <th>Edit</th>
@@ -353,7 +358,7 @@
                     ${col.searchType === 'select' ? 
                       `<select class="column-search" data-column="${col.field}">
                         <option value="">All</option>
-                        ${[...new Set(this.data.map(item => item[col.field]))].map(value => 
+                        ${[...new Set(this.data.map(item => item[col.field]))].sort().map(value => 
                           `<option value="${value}" ${this.columnSearchValues[col.field] === value ? 'selected' : ''}>${value}</option>`
                         ).join('')}
                       </select>` :
@@ -381,9 +386,14 @@
 
         // Setup column search
         this.config.container.querySelectorAll('.column-search').forEach(input => {
-          input.addEventListener('input', (e) => {
+          input.addEventListener('change', (e) => {  // Changed from 'input' to 'change'
             const column = e.target.dataset.column;
-            this.columnSearchValues[column] = e.target.value.toLowerCase();
+            const value = e.target.value;
+            if (value === '') {
+              delete this.columnSearchValues[column];
+            } else {
+              this.columnSearchValues[column] = value;
+            }
             this.filterData();
             this.currentPage = 1;
             this.render();
