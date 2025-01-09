@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Select Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Custom Select Examples</h1>
+      
+      <article>
+        <h3>Basic Select</h3>
+        <select id="basic">
+          <option value="">Choose an option...</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+      </article>
+
+      <article>
+        <h3>Searchable Multiple Select</h3>
+        <select id="multiple" multiple data-search="true">
+          <optgroup label="Group 1">
+            <option value="1">First Option</option>
+            <option value="2">Second Option</option>
+          </optgroup>
+          <optgroup label="Group 2">
+            <option value="3">Third Option</option>
+            <option value="4">Fourth Option</option>
+          </optgroup>
+        </select>
+      </article>
+
+      <article>
+        <h3>Creatable Select</h3>
+        <select id="creatable" data-search="true" data-creatable="true">
+          <option value="">Type to add new...</option>
+          <option value="apple">Apple</option>
+          <option value="banana">Banana</option>
+          <option value="orange">Orange</option>
+        </select>
+      </article>
+    </main>
+    <script type="module">
+      import { createCustomSelect } from '/src/dselect.js'
+
+      // Initialize all selects
+      document.addEventListener('DOMContentLoaded', () => {
+        // Basic select
+        createCustomSelect(document.getElementById('basic'), {
+          clearable: true
+        })
+
+        // Multiple select with search
+        createCustomSelect(document.getElementById('multiple'), {
+          searchPlaceholder: 'Search options...'
+        })
+
+        // Creatable select
+        createCustomSelect(document.getElementById('creatable'), {
+          createOptionText: 'Add "[TERM]" to the list'
+        })
+      })
+    </script>
+  </body>
+</html>
