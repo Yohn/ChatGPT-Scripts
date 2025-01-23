@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Input Formatter</title>
+</head>
+
+<body style="padding: 2.5rem;">
+	<input data-format="money" placeholder="Enter amount"><br>
+	<input data-format="phone" placeholder="(123) 456-7890"><br>
+	<input data-format="ssn" placeholder="123-45-6789"><br>
+	<input data-pattern="Z9X-Y9Z" placeholder="Custom pattern"><br>
+
+	<!-- Dynamic element -->
+	<button onclick="addInput()">Add Money Input</button>
+
+	<script src="InputFormatter.js"></script>
+	<script>
+		function addInput() {
+			const newInput = document.createElement('input');
+			newInput.setAttribute('data-format', 'money');
+			newInput.setAttribute('placeholder', 'Enter amount');
+			document.body.appendChild(newInput);
+		}
+	</script>
+</body>
+
+</html>
