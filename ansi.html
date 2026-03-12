@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANSI Studio</title>
+<style>
+	:root {
+		--green: #00ff41;
+		--green-dim: #00b32c;
+		--green-glow: #00ff4180;
+		--green-faint: #00ff410d;
+		--green-subtle: #00ff4130;
+		--bg: #030a03;
+		--bg2: #080f08;
+		--bg3: #0d170d;
+		--border: #00ff4125;
+		--border-bright: #00ff4160;
+	}
+
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+
+	body {
+		background: var(--bg);
+		color: var(--green);
+		font-family: 'Courier New', monospace;
+		height: 100vh;
+		overflow: hidden;
+		display: grid;
+		grid-template-rows: auto 1fr;
+		grid-template-columns: 260px 1fr 220px;
+		grid-template-areas:
+			"header header header"
+			"left   editor right";
+	}
+
+	/* Scanlines */
+	body::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+		pointer-events: none;
+		z-index: 100;
+	}
+
+	/* HEADER */
+	header {
+		grid-area: header;
+		background: var(--bg2);
+		border-bottom: 1px solid var(--border-bright);
+		padding: 0.5rem 1rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	header h1 {
+		font-size: 0.75rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: var(--green);
+		text-shadow: 0 0 8px var(--green);
+		white-space: pre;
+		line-height: 1.2;
+	}
+
+	.header-actions {
+		margin-left: auto;
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	/* PANELS */
+	.panel {
+		background: var(--bg2);
+		border-right: 1px solid var(--border);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	.panel-right {
+		border-right: none;
+		border-left: 1px solid var(--border);
+	}
+
+	.panel-title {
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: var(--green-dim);
+		padding: 0.6rem 0.8rem;
+		border-bottom: 1px solid var(--border);
+		position: sticky;
+		top: 0;
+		background: var(--bg2);
+		z-index: 10;
+	}
+
+	/* CHARACTER GROUPS */
+	.char-group {
+		padding: 0.5rem 0.6rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.char-group-title {
+		font-size: 0.55rem;
+		letter-spacing: 0.2em;
+		color: var(--green-dim);
+		margin-bottom: 0.4rem;
+		text-transform: uppercase;
+	}
+
+	.char-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2px;
+	}
+
+	.char-btn {
+		background: var(--bg3);
+		border: 1px solid var(--border);
+		color: var(--green);
+		font-family: 'Courier New', monospace;
+		font-size: 1rem;
+		width: 28px;
+		height: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.1s;
+		border-radius: 2px;
+	}
+
+	.char-btn:hover {
+		background: var(--green-subtle);
+		border-color: var(--green);
+		text-shadow: 0 0 6px var(--green);
+		transform: scale(1.1);
+	}
+
+	.char-btn:active {
+		background: var(--green);
+		color: var(--bg);
+	}
+
+	/* EDITOR AREA */
+	.editor-area {
+		grid-area: editor;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.editor-toolbar {
+		background: var(--bg3);
+		border-bottom: 1px solid var(--border);
+		padding: 0.4rem 0.8rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.editor-toolbar label {
+		font-size: 0.6rem;
+		letter-spacing: 0.15em;
+		color: var(--green-dim);
+		text-transform: uppercase;
+	}
+
+	.font-size-control {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
+
+	.font-size-control input[type=range] {
+		-webkit-appearance: none;
+		width: 80px;
+		height: 3px;
+		background: var(--border-bright);
+		outline: none;
+		border-radius: 2px;
+	}
+
+	.font-size-control input[type=range]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 10px;
+		height: 10px;
+		background: var(--green);
+		border-radius: 50%;
+		cursor: pointer;
+		box-shadow: 0 0 6px var(--green);
+	}
+
+	.font-size-val {
+		font-size: 0.65rem;
+		color: var(--green);
+		min-width: 30px;
+	}
+
+	textarea#editor {
+		flex: 1;
+		background: var(--bg);
+		color: var(--green);
+		font-family: 'Courier New', monospace;
+		font-size: 1.2rem;
+		line-height: 1.4;
+		border: none;
+		padding: 1.5rem;
+		resize: none;
+		outline: none;
+		text-shadow: 0 0 8px var(--green), 0 0 20px var(--green-glow);
+		letter-spacing: 0.05em;
+		white-space: pre;
+		overflow: auto;
+		tab-size: 1;
+	}
+
+	/* STATUS BAR */
+	.status-bar {
+		background: var(--bg3);
+		border-top: 1px solid var(--border);
+		padding: 0.3rem 1rem;
+		font-size: 0.6rem;
+		letter-spacing: 0.15em;
+		color: var(--green-dim);
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	.status-bar span { color: var(--green); }
+
+	/* SAVED GLYPHS */
+	.glyph-list {
+		padding: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.glyph-item {
+		background: var(--bg3);
+		border: 1px solid var(--border);
+		border-radius: 3px;
+		padding: 0.4rem 0.5rem;
+		cursor: pointer;
+		transition: all 0.15s;
+		position: relative;
+	}
+
+	.glyph-item:hover {
+		border-color: var(--green-dim);
+		background: var(--green-faint);
+	}
+
+	.glyph-item:hover .glyph-actions { opacity: 1; }
+
+	.glyph-label {
+		font-size: 0.55rem;
+		letter-spacing: 0.15em;
+		color: var(--green-dim);
+		text-transform: uppercase;
+		margin-bottom: 0.3rem;
+	}
+
+	.glyph-preview {
+		font-size: 0.55rem;
+		line-height: 1.3;
+		white-space: pre;
+		color: var(--green);
+		text-shadow: 0 0 4px var(--green-glow);
+		overflow: hidden;
+		max-height: 60px;
+	}
+
+	.glyph-actions {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		display: flex;
+		gap: 2px;
+		opacity: 0;
+		transition: opacity 0.15s;
+	}
+
+	/* BUTTONS */
+	.btn {
+		background: transparent;
+		border: 1px solid var(--border-bright);
+		color: var(--green);
+		font-family: 'Courier New', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.15em;
+		padding: 0.3rem 0.6rem;
+		cursor: pointer;
+		transition: all 0.15s;
+		text-transform: uppercase;
+	}
+
+	.btn:hover {
+		background: var(--green-subtle);
+		border-color: var(--green);
+		text-shadow: 0 0 6px var(--green);
+	}
+
+	.btn-sm {
+		padding: 0.15rem 0.35rem;
+		font-size: 0.55rem;
+	}
+
+	.btn-danger:hover {
+		background: rgba(255,50,50,0.15);
+		border-color: #ff3232;
+		color: #ff3232;
+		text-shadow: none;
+	}
+
+	/* ADD GLYPH FORM */
+	.add-glyph {
+		padding: 0.5rem;
+		border-top: 1px solid var(--border);
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.add-glyph input[type=text] {
+		background: var(--bg3);
+		border: 1px solid var(--border);
+		color: var(--green);
+		font-family: 'Courier New', monospace;
+		font-size: 0.7rem;
+		padding: 0.3rem 0.5rem;
+		outline: none;
+		width: 100%;
+	}
+
+	.add-glyph input[type=text]:focus {
+		border-color: var(--green-dim);
+	}
+
+	/* SCROLLBAR */
+	::-webkit-scrollbar { width: 4px; }
+	::-webkit-scrollbar-track { background: var(--bg); }
+	::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+	::-webkit-scrollbar-thumb:hover { background: var(--green-dim); }
+
+	.blink { animation: blink 1.2s step-end infinite; }
+	@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+	.copy-flash {
+		animation: flash 0.3s ease;
+	}
+	@keyframes flash {
+		0% { background: var(--green); color: var(--bg); }
+		100% { background: transparent; }
+	}
+</style>
+</head>
+<body>
+
+<header>
+	<h1>┏━ ANSI STUDIO ━┓</h1>
+	<div class="header-actions">
+		<button class="btn" onclick="copyAll()">COPY ALL</button>
+		<button class="btn" onclick="clearEditor()">CLEAR</button>
+		<button class="btn" onclick="saveGlyph()">SAVE SELECTION</button>
+	</div>
+</header>
+
+<!-- LEFT: Character Picker -->
+<div class="panel" id="charPanel">
+	<div class="panel-title">▸ Characters</div>
+
+	<div class="char-group">
+		<div class="char-group-title">Box — Heavy</div>
+		<div class="char-grid" id="heavy"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Box — Light</div>
+		<div class="char-grid" id="light"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Rounded</div>
+		<div class="char-grid" id="rounded"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Diagonals & Fills</div>
+		<div class="char-grid" id="diag"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Dots & Dashes</div>
+		<div class="char-grid" id="dots"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Blocks & Shades</div>
+		<div class="char-grid" id="blocks"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Misc / Faces</div>
+		<div class="char-grid" id="misc"></div>
+	</div>
+	<div class="char-group">
+		<div class="char-group-title">Braille Fills</div>
+		<div class="char-grid" id="braille"></div>
+	</div>
+</div>
+
+<!-- EDITOR -->
+<div class="editor-area">
+	<div class="editor-toolbar">
+		<div class="font-size-control">
+			<label>Size</label>
+			<input type="range" min="8" max="32" value="14" oninput="setFontSize(this.value)">
+			<span class="font-size-val" id="fsVal">14px</span>
+		</div>
+		<label>Color</label>
+		<input type="color" value="#00ff41" oninput="setColor(this.value)" style="background:none;border:1px solid var(--border-bright);width:28px;height:22px;cursor:pointer;padding:1px;">
+	</div>
+
+	<textarea id="editor" spellcheck="false" oninput="updateStatus()" onkeyup="updateStatus()" onclick="updateStatus()">┏┓┏┓┏┳━━━━┳━━━┓
+┃┃┃┃┃┣━┓┏━┫┏━┳┛
+┃┗━━┛┃╱┃┃╱┃┣━┛╱
+┗━━━━┛╱┗┛╱┗┛╱╱
+
+╮╱╭╭━━╮╮╱╱╮╭━━╮
+╰┳╯┃╱╱┃┣━━┫┃╭╮┃
+╱┃╱┃╱╱┃┃╱╱┃┃┃┃┃
+╱┗╱╰━━╯┗╱╱┗╰╯╰╯
+
+╭━┳━╯╭━╮╭━━╮╭━━╮╭━╮
+╱╱┃╱╱┣━┫┃╭╮┃┃┃╭━╮┃╱┃
+╱╱┃╱╱┃╱┃┃┃┃┃┃╰━╯┃┃╱┃
+╱╱┗╱╱╯╱╰╰╯╰╯╰━━━╯╰━╯
+
+╭━━━━╮
+┃╭╮╭╮┃
+┃┃┃┃┃┃
+╰╯╰╯╰╯
+
+╱▔▔▔▔▔╲
+▏╲╱┊╲╱▏
+▏┊▔━▔┊▏
+╲┊╭━╮┊╱
+┊╲╰━╯╱┊
+
+⠀⠀⠀⠀⠀⠀⣴⣿⡆
+⠀⠀⠀⠀⠀⠀⣿⣿⡇
+⠀⠀⠀⠀⠀⠀⣿⣿⡇
+⠀⠀⠀⣠⣦⡄⣿⣿⡇⢠⣶⡄⢀⣤⡀
+⢀⣠⡄⣿⣿⣧⣿⣿⣧⣿⣿⣧⣼⣿⣿
+⣾⣿⡇⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣧⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟
+⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁
+⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇</textarea>
+
+	<div class="status-bar">
+		<div>LN <span id="statusLine">1</span></div>
+		<div>COL <span id="statusCol">1</span></div>
+		<div>CHARS <span id="statusChars">0</span></div>
+		<div>LINES <span id="statusLines">0</span></div>
+		<div class="blink" style="margin-left:auto">█</div>
+	</div>
+</div>
+
+<!-- RIGHT: Saved Glyphs -->
+<div class="panel panel-right" id="glyphPanel">
+	<div class="panel-title">▸ Saved Glyphs</div>
+
+	<div class="glyph-list" id="glyphList"></div>
+
+	<div class="add-glyph">
+		<div class="panel-title" style="position:static;padding:0;border:none;margin-bottom:0.3rem">▸ Add From Text</div>
+		<input type="text" id="glyphName" placeholder="Label...">
+		<textarea id="glyphText" style="background:var(--bg3);border:1px solid var(--border);color:var(--green);font-family:'Courier New',monospace;font-size:0.7rem;padding:0.3rem 0.5rem;outline:none;resize:vertical;height:80px;width:100%;white-space:pre;" spellcheck="false" placeholder="Paste art here..."></textarea>
+		<button class="btn btn-sm" onclick="addGlyphManual()">ADD GLYPH</button>
+	</div>
+</div>
+
+<script>
+	// Character sets
+	const chars = {
+		heavy: ['━','┃','┏','┓','┗','┛','┣','┫','┳','┻','╋','┡','┩','┢','┪','┠','┨','┯','┷','╈','╇','╉','╊','┿','╀','╁','╂','┽','┾','╃','╄','╅','╆'],
+		light: ['─','│','┌','┐','└','┘','├','┤','┬','┴','┼','╌','╎','┄','┆','┅','┇'],
+		rounded: ['╭','╮','╰','╯','╱','╲','▔','▏','▕','▁','▂','▃','▄','▅','▆','▇','█'],
+		diag: ['╱','╲','╳','┊','┈','╱','╲','▴','▾','◂','▸','▵','▿','◃','▹'],
+		dots: ['┊','┈','╌','╎','·','⋅','∙','‥','…','∴','∵','⁖','⁘','⁙','˙'],
+		blocks: ['░','▒','▓','█','▀','▄','▌','▐','▖','▗','▘','▝','▙','▚','▛','▜','▟','▞'],
+		misc: ['┻','╋','╬','╫','╪','▕','▏','╿','╽','╾','╼','⊹','✦','◇','○','◦','┋','┉','▂','▔'],
+		braille: ['⠀','⠂','⠄','⠈','⠐','⠠','⡀','⢀','⣀','⣤','⣦','⣶','⣷','⣿','⠿','⡿','⢿','⣾','⣽','⣻','⣯','⣷']
+	};
+
+	// Saved glyphs with our session work
+	let glyphs = [
+		// WORDS
+		{ label: 'WTF v1', text: '┏┓┏┓┏┳━━━━┳━━━┓\n┃┃┃┃┃┣━┓┏━┫┏━┳┛\n┃┗━━┛┃╱┃┃╱┃┣━┛╱\n┗━━━━┛╱┗┛╱┗┛╱╱' },
+		{ label: 'WTF v2', text: '╭╮╭╮╭┳━━━━┳━━━╮\n┃┃┃┃┃┣━╮╭━┫╭━┳╯\n┃╰┻┻╯┃╱┃┃╱┃┣━╯╱\n╰━━━━╯╱╰╯╱╰╯╱╱' },
+		{ label: 'YOHN', text: '╮╱╭╭━━╮╮╱╱╮╭━━╮\n╰┳╯┃╱╱┃┣━━┫┃╭╮┃\n╱┃╱┃╱╱┃┃╱╱┃┃┃┃┃\n╱┗╱╰━━╯┗╱╱┗╰╯╰╯' },
+		{ label: 'TANGO v1', text: '╭━┳━╯╭━╮╭━━╮╭━━╮╭━╮\n╱╱┃╱╱┣━┫┃╭╮┃┃┃╭━╮┃╱┃\n╱╱┃╱╱┃╱┃┃┃┃┃┃╰━╯┃┃╱┃\n╱╱┗╱╱╯╱╰╰╯╰╯╰━━━╯╰━╯' },
+		{ label: 'TANGO v2', text: '╭┳╯╭╮╭━╮╭━━╮╭━╮\n┊┃┊┣┫┃╭┃┃┃┳╮┃┊┃\n┊┃┊┃┃┃┃┃┃╰╯┃┃┊┃\n┊╰┊╯╰╰╯╰╰━━╯╰━╯' },
+		{ label: 'HMMM', text: '╮╱╱╮╭━━━━╮╭━━━━╮╭━━━━╮\n┣━━┫┃╭╮╭╮┃┃╭╮╭╮┃┃╭╮╭╮┃\n┃╱╱┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃\n╰╱╱╰╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯' },
+		// LETTERS
+		{ label: 'Y', text: '╮╱╭\n╰┳╯\n╱┃╱\n╱┗╱' },
+		{ label: 'O', text: '╭━━╮\n┃╱╱┃\n┃╱╱┃\n╰━━╯' },
+		{ label: 'H', text: '╮╱╱╮\n┣━━┫\n┃╱╱┃\n╰╱╱╰' },
+		{ label: 'N', text: '╭━━╮\n┃╭╮┃\n┃┃┃┃\n╰╯╰╯' },
+		{ label: 'M', text: '╭━━━━╮\n┃╭╮╭╮┃\n┃┃┃┃┃┃\n╰╯╰╯╰╯' },
+		{ label: 'T', text: '╭━┳━╯\n╱╱┃╱╱\n╱╱┃╱╱\n╱╱┗╱╱' },
+		{ label: 'A', text: '╭━━╮\n┣━━┫\n┃╱╱┃\n╯╱╱╰' },
+		{ label: 'G', text: '┏━━┓\n┃┃┏━┓\n┃┗━┛┃\n┗━━━┛' },
+		{ label: 'W', text: '┏┓┏┓┏┓\n┃┃┃┃┃┃\n┃┗━━┛┃\n┗━━━━┛' },
+		{ label: 'F', text: '┳━━━┓\n┃┏━━┓\n┃┣━┛╱\n┗┛╱╱╱' },
+		{ label: 'V', text: '╮╱╱╭\n┃╱╱┃\n╰╮╭╯\n╱╰╯╱' },
+		// FACES
+		{ label: 'Face — Alien', text: '╱▔▔▔▔▔╲\n▏╲╱┊╲╱▏\n▏┊▔━▔┊▏\n╲┊╭━╮┊╱\n┊╲╰━╯╱┊' },
+		{ label: 'Face — Happy', text: '╱▔▔▔▔▔▔╲\n▏╭╮┊┊╭╮▏\n▏╰╯┊┊╰╯▏\n▏┊╭━━╮┊▏\n╲┊╰━━╯┊╱\n┊╲┊┊┊┊╱┊' },
+		{ label: 'Face — Hmm', text: '╱▔▔▔▔▔▔▔╲\n▏▔╲┊┊┊╱▔▏\n▏┊╰╮┊╭╯┊▏\n▏┊┊╰━╯┊┊▏\n▏┊╭━━━╮┊▏\n╲┊╰━━━╯┊╱' },
+		// ART
+		{ label: 'Pyramid', text: '⠀⠀⠀⠀⠀⠀⣴⣿⡆\n⠀⠀⠀⠀⠀⠀⣿⣿⡇\n⠀⠀⠀⠀⠀⠀⣿⣿⡇\n⠀⠀⠀⣠⣦⡄⣿⣿⡇⢠⣶⡄⢀⣤⡀\n⢀⣠⡄⣿⣿⣧⣿⣿⣧⣿⣿⣧⣼⣿⣿\n⣾⣿⡇⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n⣿⣿⣧⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟\n⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁\n⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇' },
+		// DIVIDERS
+		{ label: 'Divider — heavy', text: '━━━━━━━━━━━━━━━━━━━━' },
+		{ label: 'Divider — light', text: '────────────────────' },
+		{ label: 'Divider — dashed', text: '╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌' },
+		{ label: 'Divider — dotted', text: '┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈' },
+		{ label: 'Divider — double', text: '▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁' },
+		{ label: 'Divider — slash', text: '╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱' },
+		{ label: 'Divider — triple ≡', text: '≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡' },
+		{ label: 'Divider — wave ≈', text: '≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈' },
+		{ label: 'Divider — mixed', text: '━┈━┈━┈━┈━┈━┈━┈━┈━┈━' },
+		{ label: 'Divider — ornate', text: '╭━━━━━━━━━━━━━━━━━━╮\n╰━━━━━━━━━━━━━━━━━━╯' },
+	];
+
+	function buildCharPanels() {
+		for (const [key, set] of Object.entries(chars)) {
+			const container = document.getElementById(key);
+			if (!container) continue;
+			set.forEach(ch => {
+				const btn = document.createElement('button');
+				btn.className = 'char-btn';
+				btn.textContent = ch;
+				btn.title = `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')}`;
+				btn.onclick = () => insertChar(ch);
+				container.appendChild(btn);
+			});
+		}
+	}
+
+	function insertChar(ch) {
+		const ta = document.getElementById('editor');
+		const start = ta.selectionStart;
+		const end = ta.selectionEnd;
+		const val = ta.value;
+		ta.value = val.slice(0, start) + ch + val.slice(end);
+		ta.selectionStart = ta.selectionEnd = start + ch.length;
+		ta.focus();
+		updateStatus();
+	}
+
+	function setFontSize(v) {
+		document.getElementById('editor').style.fontSize = v + 'px';
+		document.getElementById('fsVal').textContent = v + 'px';
+	}
+
+	function setColor(v) {
+		document.getElementById('editor').style.color = v;
+		document.getElementById('editor').style.textShadow = `0 0 8px ${v}, 0 0 20px ${v}80`;
+	}
+
+	function updateStatus() {
+		const ta = document.getElementById('editor');
+		const val = ta.value;
+		const pos = ta.selectionStart;
+		const lines = val.slice(0, pos).split('\n');
+		document.getElementById('statusLine').textContent = lines.length;
+		document.getElementById('statusCol').textContent = lines[lines.length-1].length + 1;
+		document.getElementById('statusChars').textContent = val.length;
+		document.getElementById('statusLines').textContent = val.split('\n').length;
+	}
+
+	function copyAll() {
+		const ta = document.getElementById('editor');
+		navigator.clipboard.writeText(ta.value);
+		const btn = event.target;
+		btn.textContent = 'COPIED!';
+		btn.classList.add('copy-flash');
+		setTimeout(() => { btn.textContent = 'COPY ALL'; btn.classList.remove('copy-flash'); }, 1000);
+	}
+
+	function clearEditor() {
+		if (confirm('Clear editor?')) {
+			document.getElementById('editor').value = '';
+			updateStatus();
+		}
+	}
+
+	function saveGlyph() {
+		const ta = document.getElementById('editor');
+		const selected = ta.value.slice(ta.selectionStart, ta.selectionEnd).trim();
+		const text = selected || ta.value.trim();
+		if (!text) return;
+		const label = prompt('Label for this glyph:', 'Untitled');
+		if (!label) return;
+		glyphs.push({ label, text });
+		renderGlyphs();
+	}
+
+	function addGlyphManual() {
+		const label = document.getElementById('glyphName').value.trim() || 'Untitled';
+		const text = document.getElementById('glyphText').value.trim();
+		if (!text) return;
+		glyphs.push({ label, text });
+		document.getElementById('glyphName').value = '';
+		document.getElementById('glyphText').value = '';
+		renderGlyphs();
+	}
+
+	function insertGlyph(idx) {
+		const ta = document.getElementById('editor');
+		const pos = ta.selectionStart;
+		const val = ta.value;
+		const insert = '\n' + glyphs[idx].text + '\n';
+		ta.value = val.slice(0, pos) + insert + val.slice(pos);
+		ta.selectionStart = ta.selectionEnd = pos + insert.length;
+		ta.focus();
+		updateStatus();
+	}
+
+	function deleteGlyph(idx) {
+		glyphs.splice(idx, 1);
+		renderGlyphs();
+	}
+
+	function renderGlyphs() {
+		const list = document.getElementById('glyphList');
+		list.innerHTML = '';
+		glyphs.forEach((g, i) => {
+			const item = document.createElement('div');
+			item.className = 'glyph-item';
+			item.innerHTML = `
+				<div class="glyph-label">${g.label}</div>
+				<div class="glyph-preview">${g.text.replace(/</g,'&lt;')}</div>
+				<div class="glyph-actions">
+					<button class="btn btn-sm" onclick="insertGlyph(${i})">INS</button>
+					<button class="btn btn-sm btn-danger" onclick="deleteGlyph(${i})">✕</button>
+				</div>
+			`;
+			list.appendChild(item);
+		});
+	}
+
+	// Init
+	buildCharPanels();
+	renderGlyphs();
+	updateStatus();
+</script>
+</body>
+</html>
